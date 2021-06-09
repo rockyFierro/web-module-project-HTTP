@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Link, useHistory, useParams} from 'react-router-dom';
+import axios from "axios";
 
 const EditMovieForm = (props) => {
     //hooks
@@ -25,6 +26,23 @@ const EditMovieForm = (props) => {
         e.preventDefault();
     }
     console.log(id);
+    //functions
+	useEffect(() => {
+		axios.get(`http://localhost:5000/api/movies/${id}`)
+			.then(res => {
+				console.log(res.data);
+				setMovie({
+                    title: res.data.title,
+                    director:res.data.director,
+                    genre: res.data.genre,
+                    metascore: res.data.metascore,
+                    description: res.data.description
+                })
+			})
+			.catch(err => {
+				console.log(err);
+			});
+	}, []);
     //component
     return (
         <div className="col">
