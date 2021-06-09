@@ -53,7 +53,7 @@ const App = (props) => {
                             <Movie/>
                         </Route>
 
-                        <Route path="/movies">
+                        <Route path="/mvies">
                             <MovieList movies={movies}/>
                         </Route>
 
