@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 //routing
-import {Redirect, Route, Switch} from "react-router-dom";
+import {Redirect, Route, Switch, useHistory} from "react-router-dom";
 //3rd party
 import axios from 'axios';
 //components
@@ -13,7 +13,9 @@ import EditMovieForm from "./components/EditMovieForm";
 const App = (props) => {
     const [movies, setMovies] = useState([]);
     const [favoriteMovies, setFavoriteMovies] = useState([]);
-//initial call out
+    const history = useHistory();
+
+    //initial call out
     useEffect(() => {
         axios.get('http://localhost:5000/api/movies')
             .then(res => {
@@ -25,7 +27,20 @@ const App = (props) => {
     }, []);
 //handlers
     //delete
-    const deleteMovie = (id) => {
+    const deleteMovie = (id) => { //why is this getting called on render?
+        axios.delete(`http://localhost:5000/api/movies/${id}`)
+            .then(res => {
+                console.log(res.data)
+            })
+            .then(() => {
+                axios.get('http://localhost:5000/api/movies')
+                    .then(res => {
+                        setMovies(res.data);
+                        history.push('/movies');
+                    })
+                    .catch(err => console.log(err))
+            })
+            .catch(err => console.log(err))
     }
     //add
     const addToFavorites = (movie) => {
@@ -46,15 +61,17 @@ const App = (props) => {
 
                     <Switch>
                         <Route path="/movies/edit/:id"
-                               render={ rest => (
-                                   <EditMovieForm {...rest} setMovies={setMovies} />
+                               render={rest => (
+                                   <EditMovieForm {...rest}
+                                                  setMovies={setMovies}/>
                                )}
                         />
 
-                        <Route path="/movies/:id">
-                            <Movie/>
-                        </Route>
-
+                        <Route path="/movies/:id"
+                               render={rest => (
+                                   <Movie {...rest} deleteMovie={deleteMovie}/>
+                               )}
+                        />
                         <Route path="/movies">
                             <MovieList movies={movies}/>
                         </Route>

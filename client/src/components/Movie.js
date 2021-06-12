@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams, useHistory } from 'react-router-dom';
+import { Link, useParams} from 'react-router-dom';
 
 import axios from 'axios';
 
 const Movie = (props) => {
-    const { addToFavorites } = props;
+    const { addToFavorites, deleteMovie } = props;
 
     const [movie, setMovie] = useState('');
 
     const { id } = useParams();
-    const { push } = useHistory();
 
     useEffect(()=>{
         axios.get(`http://localhost:5000/api/movies/${id}`)
@@ -52,7 +51,7 @@ const Movie = (props) => {
                         <section>
                             <span className="m-2 btn btn-dark">Favorite</span>
                             <Link to={`/movies/edit/${movie.id}`} className="m-2 btn btn-success">Edit</Link>
-                            <span className="delete"><input type="button" className="m-2 btn btn-danger" value="Delete"/></span>
+                            <span className="delete"><input type="button" className="m-2 btn btn-danger" onClick={()=> deleteMovie(id)} value="Delete" /></span>
                         </section>
                     </div>
                 </div>
